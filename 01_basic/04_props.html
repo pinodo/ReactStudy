@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      crossorigin
+      src="https://unpkg.com/react@18/umd/react.development.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+    ></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root1"></div>
+    <div id="root2"></div>
+    <div id="root3"></div>
+    <div id="root4"></div>
+    <div id="root5"></div>
+
+    <script type="text/babel">
+      // props 기본 개념
+
+      //----------- 1. 기본 전달(부모 -> 자식 데이터 전달)
+
+      // props type
+      /**
+       * @typeof {Object} NameCardProps
+       * @property {string} name
+       * @property {string} phone
+       */
+
+      /** @type {React.FC<NameCardProps>} */
+      const NameCard1 = (props) => {
+        // props 객체에 name, phone 프로퍼티를 전달됨
+        return (
+          <>
+            <div>이름 {props.name}</div>
+            <div>전화 {props.phone}</div>
+          </>
+        );
+      };
+
+      /** @type {React.FC<NameCardProps>} */
+      const NameCard2 = ({ name, phone }) => {
+        // props 객체에 name, phone 프로퍼티를 전달됨
+        return (
+          <>
+            <div>이름 {name}</div>
+            <div>전화 {phone}</div>
+          </>
+        );
+      };
+
+      /** @type {React.FC<NameCardProps>} */
+      const NameCard3 = ({ name = "jessica", phone = "010-1357-2468" }) => {
+        // 디폴트 매개변수
+        return (
+          <>
+            <div>이름 {name}</div>
+            <div>전화 {phone}</div>
+          </>
+        );
+      };
+
+      /** @type {string} */
+      const userName = "min";
+      /** @type {string} */
+      const userPhone = "010-1234-5678";
+
+      ReactDOM.createRoot(document.getElementById("root1")).render([
+        <NameCard1 name={userName} phone={userPhone} />, // 컴포넌트로 name, phone 프로퍼티를 전달함
+        <NameCard2 name={"alice"} phone={"010-9876-5432"} />, // name="alice"도 가능
+        <NameCard3 name="hong" />,
+      ]);
+
+      //----------- 2. props drilling: 하위 컴포넌트로 프로퍼티를 계속 전달하는 것을 의미
+
+      // props type
+      /**
+       * @typeof {Object} DrillingProps
+       * @property {string} data
+       */
+
+      /** @type {React.FC<DrillingProps>} */
+      const CompThree = ({ data }) => {
+        return (
+          <>
+            <div>CompThree: {data}</div>
+          </>
+        );
+      };
+
+      /** @type {React.FC<DrillingProps>} */
+      const CompTwo = ({ data }) => {
+        return (
+          <>
+            <div>CompTwo: {data}</div>
+            <CompThree data={data} />
+            {/* 하위 컴포넌트로 값을 그대로 넘기는 것: Drilling */}
+          </>
+        );
+      };
+
+      /** @type {React.FC<DrillingProps>} */
+      const CompOne = ({ data }) => {
+        return (
+          <>
+            <div>CompOne: {data}</div>
+            <CompTwo data={data} />
+            {/* 하위 컴포넌트로 값을 그대로 넘기는 것: Drilling */}
+          </>
+        );
+      };
+
+      // 화면에 렌더링 할 컴포넌트
+      /** @type {React.FC} */
+      const App = () => {
+        // 컴포넌트로 전달할 데이터
+        /** @type {string} */
+        const data = "Hello World";
+
+        return (
+          <>
+            <CompOne data={data} />
+          </>
+        );
+      };
+
+      ReactDOM.createRoot(document.getElementById("root2")).render(<App />);
+
+      //----------- 3. props children: 컴포넌트 내부 요소
+
+      // props type
+      /**
+       * @typeof {Object} ChildrenProps
+       * @property {React.ReactNode} children
+       */
+
+      /** @type {React.FC<ChildrenProps>} */
+      const GiftCard1 = (props) => {
+        return <p>{props.children}</p>;
+      };
+
+      /** @type {React.FC<ChildrenProps>} */
+      const GiftCard2 = ({ children }) => {
+        return <p>{children}</p>;
+      };
+
+      ReactDOM.createRoot(document.getElementById("root3")).render([
+        <GiftCard1>5만원</GiftCard1>, // children의 타입: ReactNode
+        <GiftCard2>
+          <strong>10만원</strong>
+        </GiftCard2>,
+      ]);
+    </script>
+  </body>
+</html>
